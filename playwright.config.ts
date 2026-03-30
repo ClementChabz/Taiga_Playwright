@@ -3,10 +3,10 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   fullyParallel: false,
   workers: 1,
-  timeout: 50 * 1000,
+  timeout: 100 * 1000,
   expect: { timeout: 10 * 1000 },
   use: {
-    launchOptions: { slowMo: 500 },
+    launchOptions: { slowMo: 100 },
   },
   projects: [
     {

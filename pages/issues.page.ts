@@ -13,16 +13,16 @@ export class IssuesPage {
         await this.page.getByRole('textbox', { name: 'Please add descriptive text' }).fill(description);
 
         // Type
-        await this.page.locator('div').filter({ hasText: new RegExp(`^${type}$`) }).click();
-        await this.page.getByRole('link', { name: type, exact: true }).click();
+        await this.page.locator('tg-issue-type-button').getByText('Type').click();
+        await this.page.locator('tg-issue-type-button').getByRole('link', { name: type, exact: true }).click();
 
         // Severity
-        await this.page.locator('div').filter({ hasText: new RegExp(`^${severity}$`) }).click();
-        await this.page.getByRole('link', { name: severity, exact: true }).click();
+        await this.page.locator('tg-issue-severity-button').getByText('Severity').click();
+        await this.page.locator('tg-issue-severity-button').getByRole('link', { name: severity, exact: true }).click();
 
         // Priority
-        await this.page.locator('tg-issue-priority-button span').filter({ hasText: severity }).click();
-        await this.page.getByRole('link', { name: priority, exact: true }).click();
+        await this.page.locator('tg-issue-priority-button').getByText('Priority').click();
+        await this.page.locator('tg-issue-priority-button').getByRole('link', { name: priority, exact: true }).click();
 
         // Fermer cookie warning si présent
         const cookieWarning = this.page.locator('cookie-warning').getByRole('link', { name: 'close' });
