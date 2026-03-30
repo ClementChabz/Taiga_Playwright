@@ -56,12 +56,24 @@ timeout: 300 * 1000,
 | 05 | Rechercher et supprimer une issue par référence | ⚠️ Déconseillé — nécessite de connaître une référence existante |
 | 06 | Créer une issue et la supprimer par référence | ✅ Préféré — autonome, crée et supprime sa propre issue |
 
+> 💡 Le test 06 utilise `ref + 1` pour récupérer la référence de l'issue nouvellement créée — Taiga affiche la liste avant que le ref soit mis à jour, donc on incrémente manuellement.
+
 ## Génération des données
 
-Les 20 issues sont générées avec Faker :
+Les 20 issues sont générées avec Faker et stockées dans `data/issues.json`. Le fichier est déjà généré mais peut être regénéré à tout moment avec de nouvelles données aléatoires :
 ```bash
 npx tsx data/generate-issues.ts
 ```
+
+> ⚠️ Regénérer le fichier écrase les données précédentes.
+
+## Dépendances principales
+
+| Package | Usage |
+|---------|-------|
+| `@playwright/test` | Framework de tests |
+| `@faker-js/faker` | Génération de données aléatoires |
+| `dotenv` | Chargement des variables d'environnement |
 
 ## Structure
 ```
