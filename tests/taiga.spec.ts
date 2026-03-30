@@ -25,18 +25,26 @@ test('02 - Créer une issue', async ({ page }) => {
     });
 
 test('03 - Créer 20 issues depuis JSON', async ({ page }) => {
-  const project = new ProjectPage(page);
-  const issuesPage = new IssuesPage(page);
+    const project = new ProjectPage(page);
+    const issuesPage = new IssuesPage(page);
 
-  await project.goToIssues();
+    await project.goToIssues();
 
-  for (const issue of issues) {
-    await issuesPage.createIssue(
-      issue.subject,
-      issue.description,
-      issue.type,
-      issue.severity,
-      issue.priority
-    );
-  }
+    for (const issue of issues) {
+        await issuesPage.createIssue(
+        issue.subject,
+        issue.description,
+        issue.type,
+        issue.severity,
+        issue.priority
+        );
+    }
+});
+
+test('04 - Filtrer Type = Bug et Severity = Critical', async ({ page }) => {
+    const project = new ProjectPage(page);
+    const issuesPage = new IssuesPage(page);
+
+    await project.goToIssues();
+    await issuesPage.filterIssues('Bug', 'Critical');
 });

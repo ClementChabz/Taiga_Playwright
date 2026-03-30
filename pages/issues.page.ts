@@ -40,4 +40,16 @@ export class IssuesPage {
         const ref = title?.match(/#(\d+)/)?.[1];
         return ref;
     }
+
+    async filterIssues(type: string, severity: string) {
+        await this.page.getByRole('button', { name: 'Filters' }).click();
+        await this.page.getByRole('button', { name: 'Type' }).click();
+        await this.page.getByRole('button', { name: type }).click();
+        await this.page.getByRole('button', { name: 'Severity' }).click();
+        await this.page.getByRole('button', { name: severity }).click();
+
+        // Vérifier que le filtre est appliqué
+        await expect(this.page.getByText('Filtered by: Bug Critical')).toBeVisible();    
+    }
 }
+
