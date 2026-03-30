@@ -36,12 +36,43 @@ npx playwright test --headed
 npx playwright test --headed -g "01 - Naviguer"
 ```
 
+## Configuration du timeout
+
+Le timeout par défaut est configuré dans `playwright.config.ts` :
+```typescript
+timeout: 300 * 1000,
+```
+
+> ⚠️ Le test 03 (création de 20 issues) est particulièrement long — ne pas descendre en dessous de 300 secondes pour ce test.
+
+## Tests
+
+| # | Description | Notes |
+|---|-------------|-------|
+| 01 | Naviguer vers les issues du projet | |
+| 02 | Créer une issue | |
+| 03 | Créer 20 issues depuis JSON | Timeout élevé nécessaire |
+| 04 | Filtrer Type = Bug et Severity = Critical | |
+| 05 | Rechercher et supprimer une issue par référence | ⚠️ Déconseillé — nécessite de connaître une référence existante |
+| 06 | Créer une issue et la supprimer par référence | ✅ Préféré — autonome, crée et supprime sa propre issue |
+
+## Génération des données
+
+Les 20 issues sont générées avec Faker :
+```bash
+npx tsx data/generate-issues.ts
+```
+
 ## Structure
 ```
 ├── .auth/              # Session Playwright (gitignore)
 ├── .env                # Credentials (gitignore)
+├── data/
+│   ├── generate-issues.ts
+│   └── issues.json
 ├── pages/              # Page Object Model
-│   └── project.page.ts
+│   ├── project.page.ts
+│   └── issues.page.ts
 ├── tests/
 │   ├── auth.setup.ts   # Setup authentification
 │   └── taiga.spec.ts   # Tests métier

@@ -38,7 +38,7 @@ export class IssuesPage {
         const issueLink = this.page.getByRole('link', { name: new RegExp(subject) }).first();
         const title = await issueLink.getAttribute('title');
         const ref = title?.match(/#(\d+)/)?.[1];
-        return ref;
+        return ref ? String(Number(ref) + 1) : undefined;
     }
 
     async filterIssues(type: string, severity: string) {
@@ -50,6 +50,23 @@ export class IssuesPage {
 
         // Vérifier que le filtre est appliqué
         await expect(this.page.getByText('Filtered by: Bug Critical')).toBeVisible();    
+    }
+
+    async deleteIssueByRef(ref: string) {
+       //attendre que la liste se mette a jour
+        await this.page.waitForTimeout(1000);
+
+        // Rechercher par référence
+        await this.page.getByRole('searchbox', { name: 'subject or reference' }).fill(ref);
+        await this.page.getByText(new RegExp(`#${ref}`)).first().click();
+
+        // Supprimer
+        await this.page.locator('.btn-icon.button-delete').click();
+        await this.page.getByRole('button', { name: 'Delete' }).click();
+
+        // Vérifier que l'issue n'existe plus
+        await this.page.getByRole('searchbox', { name: 'subject or reference' }).fill(ref);
+        await expect(this.page.getByText(new RegExp(`#${ref}`))).not.toBeVisible();
     }
 }
 

@@ -48,3 +48,30 @@ test('04 - Filtrer Type = Bug et Severity = Critical', async ({ page }) => {
     await project.goToIssues();
     await issuesPage.filterIssues('Bug', 'Critical');
 });
+
+test('05 - Rechercher et supprimer une issue par référence', async ({ page }) => {
+    const project = new ProjectPage(page);
+    const issuesPage = new IssuesPage(page);
+
+    await project.goToIssues();
+    await issuesPage.deleteIssueByRef('15');
+});
+
+test('06 - Créer une issue puis la supprimer', async ({ page }) => {
+    const project = new ProjectPage(page);
+    const issuesPage = new IssuesPage(page);
+
+    await project.goToIssues();
+    
+    const ref = await issuesPage.createIssue(
+        "Issue à supprimer",
+        "Cette issue sera supprimée",
+        'Bug',
+        'Critical',
+        'High'
+    );
+
+
+
+    await issuesPage.deleteIssueByRef(ref!);
+});
