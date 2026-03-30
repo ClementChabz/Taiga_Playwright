@@ -28,17 +28,15 @@ export class IssuesPage {
         const cookieWarning = this.page.locator('cookie-warning').getByRole('link', { name: 'close' });
         if (await cookieWarning.isVisible()) await cookieWarning.click();
 
-        await this.page.getByRole('button', { name: 'Create' }).click();
-
-        // Vérifier que l'issue apparaît dans la liste
-        // Après le clic sur Create, attendre la nouvelle issue en tête de liste
-        await expect(this.page.getByRole('link', { name: new RegExp(subject) }).first()).toBeVisible();
-
-        // Récupérer le numéro pour pouvoir le réutiliser plus tard
-        const issueLink = this.page.getByRole('link', { name: new RegExp(subject) }).first();
-        const title = await issueLink.getAttribute('title');
-        const ref = title?.match(/#(\d+)/)?.[1];
-        return ref ? String(Number(ref) + 1) : undefined;
+        // Après (fiable)
+        const [response] = await Promise.all([
+        this.page.waitForResponse(resp => 
+            resp.url().includes('/api/v1/issues') && resp.status() === 201
+        ),
+        this.page.getByRole('button', { name: 'Create' }).click(),
+        ]);
+        const body = await response.json();
+        return String(body.ref);
     }
 
     async filterIssues(type: string, severity: string) {
@@ -53,20 +51,34 @@ export class IssuesPage {
     }
 
     async deleteIssueByRef(ref: string) {
-       //attendre que la liste se mette a jour
-        await this.page.waitForTimeout(1000);
-
         // Rechercher par référence
         await this.page.getByRole('searchbox', { name: 'subject or reference' }).fill(ref);
-        await this.page.getByText(new RegExp(`#${ref}`)).first().click();
+        await this.page.waitForTimeout(1000);
+
+        // Fermer le cookie warning si présent
+        const cookieWarning = this.page.locator('cookie-warning').getByRole('link', { name: 'close' });
+        if (await cookieWarning.isVisible()) await cookieWarning.click();
+
+        // Vérifier que l'issue existe bien dans la liste
+        const issueLink = this.page.getByRole('link', { name: new RegExp(`^#${ref} `) });
+        await expect(issueLink, `L'issue #${ref} n'existe pas`).toBeVisible();
+
+        // Naviguer directement vers l'issue
+        await this.page.goto(`https://tree.taiga.io/project/${process.env.TAIGA_PROJECT_SLUG}/issue/${ref}`);
 
         // Supprimer
         await this.page.locator('.btn-icon.button-delete').click();
         await this.page.getByRole('button', { name: 'Delete' }).click();
 
-        // Vérifier que l'issue n'existe plus
+        // Vérifier qu'on est redirigé vers la liste
+        await expect(this.page).toHaveURL(/\/issues$/);
+
+        // Vérifier que l'issue n'apparaît plus dans la recherche
         await this.page.getByRole('searchbox', { name: 'subject or reference' }).fill(ref);
-        await expect(this.page.getByText(new RegExp(`#${ref}`))).not.toBeVisible();
+        await this.page.waitForTimeout(1000);
+        await expect(
+            this.page.getByRole('link', { name: new RegExp(`^#${ref} `) })
+        ).not.toBeVisible();
     }
 }
 

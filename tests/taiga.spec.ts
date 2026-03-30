@@ -54,7 +54,7 @@ test('05 - Rechercher et supprimer une issue par référence', async ({ page }) 
     const issuesPage = new IssuesPage(page);
 
     await project.goToIssues();
-    await issuesPage.deleteIssueByRef('15');
+    await issuesPage.deleteIssueByRef('11');
 });
 
 test('06 - Créer une issue puis la supprimer', async ({ page }) => {
