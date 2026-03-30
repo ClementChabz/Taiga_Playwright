@@ -53,10 +53,10 @@ timeout: 300 * 1000,
 | 02 | Créer une issue | |
 | 03 | Créer 20 issues depuis JSON | Timeout élevé nécessaire |
 | 04 | Filtrer Type = Bug et Severity = Critical | |
-| 05 | Rechercher et supprimer une issue par référence | ⚠️ Déconseillé — nécessite de connaître une référence existante |
+| 05 | Rechercher et supprimer une issue par référence | ⚠️ Déconseillé — nécessite de connaître une référence existante. Si la ref n'existe pas, le test échoue avec le message `L'issue #X n'existe pas` |
 | 06 | Créer une issue et la supprimer par référence | ✅ Préféré — autonome, crée et supprime sa propre issue |
 
-> 💡 Le test 06 utilise `ref + 1` pour récupérer la référence de l'issue nouvellement créée — Taiga affiche la liste avant que le ref soit mis à jour, donc on incrémente manuellement.
+> 💡 Le test 06 récupère automatiquement la référence de l'issue créée depuis la réponse API de Taiga (status 201), ce qui garantit un ref exact peu importe l'ordre d'exécution des tests.
 
 ## Génération des données
 
